@@ -50,19 +50,24 @@ This notebook walks through:
 
 ## Algorithm
 
-For \(N\) high-dimensional points \(x_1, \dots, x_N\) and a target dimension \(d\) (typically 2):
+For $N$ high-dimensional points $x_1, \dots, x_N$ and a target dimension $d$ (typically 2):
 
-1. **High-dim affinities.** For each pair \((i, j)\), compute a conditional Gaussian probability:
-   \[ p_{j|i} = \frac{\exp(-\|x_i - x_j\|^2 / 2\sigma_i^2)}{\sum_{k\neq i} \exp(-\|x_i - x_k\|^2 / 2\sigma_i^2)} \]
-   The bandwidth \(\sigma_i\) is found by **binary search** so that the perplexity of the conditional distribution equals the user's `perplexity` parameter. Symmetrize: \(p_{ij} = (p_{j|i} + p_{i|j}) / (2N)\).
-2. **Low-dim affinities.** Place \(N\) points \(y_1, \dots, y_N\) in \(\mathbb{R}^d\). Define heavy-tailed similarities with a Student-t kernel:
-   \[ q_{ij} = \frac{(1 + \|y_i - y_j\|^2)^{-1}}{\sum_{k\neq l} (1 + \|y_k - y_l\|^2)^{-1}} \]
-3. **Optimization.** Minimize \(\mathrm{KL}(P \,\|\, Q) = \sum_{i\neq j} p_{ij} \log (p_{ij}/q_{ij})\) by gradient descent with momentum.
+1. **High-dim affinities.** For each pair $(i, j)$, compute a conditional Gaussian probability:
+
+$$ p_{j \mid i} = \frac{\exp(-\lVert x_i - x_j \rVert^2 / 2\sigma_i^2)}{\sum_{k \neq i} \exp(-\lVert x_i - x_k \rVert^2 / 2\sigma_i^2)} $$
+
+   The bandwidth $\sigma_i$ is found by **binary search** so that the perplexity of the conditional distribution equals the user's `perplexity` parameter. Symmetrize: $p_{ij} = (p_{j \mid i} + p_{i \mid j}) / (2N)$.
+
+2. **Low-dim affinities.** Place $N$ points $y_1, \dots, y_N$ in $\mathbb{R}^d$. Define heavy-tailed similarities with a Student-t kernel:
+
+$$ q_{ij} = \frac{(1 + \lVert y_i - y_j \rVert^2)^{-1}}{\sum_{k \neq l} (1 + \lVert y_k - y_l \rVert^2)^{-1}} $$
+
+3. **Optimization.** Minimize $\mathrm{KL}(P \,\Vert\, Q) = \sum_{i \neq j} p_{ij} \log (p_{ij} / q_{ij})$ by gradient descent with momentum.
 
 ### Implementation notes
 
-- **Binary search for \(\sigma_i\)** balances accuracy and efficiency while guaranteeing the requested perplexity per point.
-- **Symmetric normalization** of \(P\) ensures probabilities are properly scaled.
+- **Binary search for $\sigma_i$** balances accuracy and efficiency while guaranteeing the requested perplexity per point.
+- **Symmetric normalization** of $P$ ensures probabilities are properly scaled.
 - **Student-t kernel in low-dim** addresses the *crowding problem* by spreading distant points further apart than a Gaussian would.
 - **Gradient descent with momentum** is used in place of more advanced optimizers like Barnes-Hut or FFT-accelerated gradients (which sklearn uses internally).
 
