@@ -2,8 +2,6 @@
 
 A Jupyter notebook that implements **t-SNE (t-Distributed Stochastic Neighbor Embedding)** from scratch, applies it to the `digits` dataset, compares it to scikit-learn's reference implementation, and extends it with a custom `transform` step that maps unseen samples into an existing embedding.
 
-This was Exercise 1 of course 3945 (Machine Learning), 2025A.
-
 ---
 
 ## Table of contents
